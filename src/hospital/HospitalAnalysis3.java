@@ -86,30 +86,7 @@ class Assembler extends SubAssembly{
     }
     public Assembler(Pipe inPipe,Fields fields){
         setPrevious(inPipe);
-        inPipe=new Each(inPipe,new Fields("City"),new CityWiseFilter(),Fields.ALL);
-        setTails(inPipe);
-    }
-}
 
-class CityWiseFilter extends BaseOperation<Tuple> implements cascading.operation.Function<Tuple>{
-    /**
-     *
-     */
-    private static final long serialVersionUID = -2381635909078632398L;
-    public void prepare(FlowProcess fp,OperationCall<Tuple> oc){
-        oc.setContext(Tuple.size(1));
-    }
-    public void cleanup(FlowProcess fp,OperationCall<Tuple> oc){
-        oc.setContext(null);
-    }
-    @Override
-    public void operate(FlowProcess flowProcess, FunctionCall<Tuple> functionCall) {
-        TupleEntry entry=functionCall.getArguments();
-        Tuple result=new Tuple();
-        String city=entry.getString(0);
-        if(city.toString().equals("Jamshedpur")){
-            result.addString(city);
-            functionCall.getOutputCollector().add(result);
         }
 
     }
