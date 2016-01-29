@@ -23,58 +23,7 @@ import cascading.tuple.Fields;
 import cascading.tuple.Tuple;
 import cascading.tuple.TupleEntry;
 
-/**
- * Created by AniruddhaS on 1/28/2016.
- */
 
-public class HospitalAnalysis3 {
-    public static void main(String args[]){
-        String sourcePath=args[0];
-        String sinkPath=args[1];
-        String trapPath=args[2];
-        Properties properties=new Properties();
-        AppProps.setApplicationJarClass(properties, HospitalAnalysis3.class);
-        Fields fieldNames=
-                new Fields("Sr No",
-                        "Hospital Name",
-                        "Zone",
-                        "State",
-                        "City",
-                        "Address",
-                        "Contact Person",
-                        "Contact Number",
-                        "Pincode",
-                        "Area");
-        //create Schemes
-        Scheme sourceScheme=new TextDelimited(fieldNames,"\t");
-        Scheme sinkScheme=new TextDelimited(true,"\t");
-        Scheme trapScheme=new TextDelimited();
-
-        //Taps
-        Tap sourceTap=new Hfs(sourceScheme,sourcePath);
-        Tap sinkTap=new Hfs(sinkScheme,sinkPath,SinkMode.REPLACE);
-        Tap trapTap=new Hfs(trapScheme,trapPath);
-
-        //Pipe operations
-        Pipe sourcePipe=new Pipe("source");
-        Pipe sourceFiltered=new Pipe("filteredPipe");
-        Pipe outputPipe=new Pipe("outputPipe");
-        //put assertions
-        AssertSizeEquals equals=new AssertSizeEquals(10);
-        sourceFiltered=new Each(sourcePipe, AssertionLevel.STRICT,equals);
-
-        outputPipe=new Assembler(sourceFiltered,fieldNames);
-
-        FlowDef flowDef=FlowDef.flowDef()
-                .setName("Hospital")
-                .addSource(sourcePipe,sourceTap)
-                .addTailSink(outputPipe,sinkTap)
-                .addTrap(sourceFiltered,trapTap);
-        Flow mFlow=new Hadoop2MR1FlowConnector(properties).connect(flowDef);
-        mFlow.complete();
-
-    }
-}
 
 class Assembler extends SubAssembly{
     /**
